@@ -3,6 +3,43 @@ import { NextRequest } from "next/server";
 //To-Do: connect to DB
 //To-Do: add total count based on DB
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
+// import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: process.env.firebaseApiKey,
+  authDomain: "testing-firestore-4aca5.firebaseapp.com",
+  projectId: "testing-firestore-4aca5",
+  storageBucket: "testing-firestore-4aca5.firebasestorage.app",
+  messagingSenderId: "70817579782",
+  appId: "1:70817579782:web:f26612449109478dcc1487",
+  measurementId: "G-3SH76SLCFQ",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+// const analytics = getAnalytics(app);
+const db = getFirestore(app);
+
+try {
+  const docRef = await addDoc(collection(db, "todos"), {
+    id: 1,
+    title: "Do your laundry",
+    description: "Put clothes into washing machine. Then hang them",
+    done: false,
+  });
+  console.log("Document written with ID: ", docRef.id);
+} catch (e) {
+  console.error("Error adding document: ", e);
+}
+
 export async function GET(request: NextRequest) {
   // For example, fetch data from your DB here
   const searchParams = request.nextUrl.searchParams;
