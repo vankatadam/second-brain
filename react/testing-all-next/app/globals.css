@@ -24,3 +24,15 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+th,
+td {
+  border: 1px solid black;
+  padding: 2px;
+}
+
+thead th,
+tfoot th,
+tfoot td {
+  background: lightgray;
+}
