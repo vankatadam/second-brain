@@ -21,6 +21,15 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const page = searchParams.get("page");
   const limit = searchParams.get("limit");
+  const maxCount = searchParams.get("maxCount");
+
+  const count = await todosRef.count().get();
+  if (!!maxCount) {
+    return new Response(JSON.stringify({ maxCount: count.data().count }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 
   if (!page || !limit) {
     return new Response(null, {
@@ -30,8 +39,6 @@ export async function GET(request: NextRequest) {
 
   const pageInt = parseInt(searchParams.get("page")) - 1;
   const limitInt = parseInt(searchParams.get("limit"));
-
-  const count = await todosRef.count().get();
 
   if (parseInt(page) * parseInt(limit) > count.data().count) {
     return new Response(null, {
@@ -50,15 +57,10 @@ export async function GET(request: NextRequest) {
       return data;
     });
 
-  return new Response(
-    JSON.stringify(
-      todos.slice(pageInt * limitInt, pageInt * limitInt + limitInt)
-    ),
-    {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  return new Response(JSON.stringify(todos), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 // const todos = [

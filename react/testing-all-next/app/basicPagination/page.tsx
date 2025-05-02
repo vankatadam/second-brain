@@ -4,14 +4,23 @@ import { useEffect, useState } from "react";
 export default function BasicPagination() {
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [maxTodos, setMaxTodos] = useState(10);
 
   useEffect(() => {
+    console.log("effect run", currentPage);
     fetch(`/api/todos?page=${currentPage}&limit=${itemsPerPage}`)
       .then((res) => res.json())
       .then((data) => setData(data))
       .catch((e) => console.log(e));
   }, [currentPage, itemsPerPage]);
+
+  useEffect(() => {
+    fetch("/api/todos?maxCount=1")
+      .then((res) => res.json())
+      .then((data) => setMaxTodos(parseInt(data.maxCount)))
+      .catch((e) => console.log(e));
+  });
 
   return (
     <div className="flex justify-center">
@@ -45,7 +54,7 @@ export default function BasicPagination() {
             <td>?</td>
             <td className="flex gap-3">
               <div>Page: </div>
-              {[...Array(10).keys()].map((e) => {
+              {[...Array(maxTodos / itemsPerPage).keys()].map((e) => {
                 return (
                   <button
                     key={e}
