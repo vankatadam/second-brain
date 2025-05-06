@@ -17,7 +17,6 @@ admin.initializeApp({
 const todosRef = admin.firestore().collection("todos");
 
 export async function GET(request: NextRequest) {
-  // For example, fetch data from your DB here
   const searchParams = request.nextUrl.searchParams;
   const page = searchParams.get("page");
   const limit = searchParams.get("limit");
@@ -53,7 +52,6 @@ export async function GET(request: NextRequest) {
     .get()
     .then((value) => {
       const data = value.docs.map((doc) => doc.data());
-      console.log("DATA?", data);
       return data;
     });
 
@@ -63,13 +61,34 @@ export async function GET(request: NextRequest) {
   });
 }
 
+export async function POST(request: NextRequest) {
+  const data = await request.json();
+  const sucessfull = await todosRef
+    .doc(data.id.toString())
+    .update(data)
+    .then(() => true)
+    .catch((err) => {
+      console.log("err in updating todo", err);
+      return false;
+    });
+  if (sucessfull) {
+    return new Response(null, {
+      status: 200,
+    });
+  } else {
+    return new Response(null, {
+      status: 500,
+    });
+  }
+}
+
 // const todos = [
-//   {
-//     id: 1,
-//     title: "Do your laundry",
-//     description: "Put clothes into washing machine. Then hang them",
-//     done: false,
-//   },
+// {
+//   id: 1,
+//   title: "Do your laundry",
+//   description: "Put clothes into washing machine. Then hang them",
+//   done: false,
+// },
 //   {
 //     id: 2,
 //     title: "Buy groceries",

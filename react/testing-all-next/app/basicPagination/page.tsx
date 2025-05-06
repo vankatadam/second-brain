@@ -2,7 +2,9 @@
 import { useEffect, useState } from "react";
 
 export default function BasicPagination() {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<
+    { id: string; title: string; description: string; done: boolean }[]
+  >([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [maxTodos, setMaxTodos] = useState(10);
@@ -40,11 +42,44 @@ export default function BasicPagination() {
           </tr>
         </thead>
         <tbody>
-          {data.map((todo) => (
+          {data.map((todo, index) => (
             <tr key={todo.id}>
               <th scope="row">{todo.title}</th>
               <td>{todo.description}</td>
-              <td>{!!todo.done}</td>
+              <td>
+                <input
+                  type="checkbox"
+                  checked={todo.done}
+                  onChange={async () => {
+                    const changedTodo = {
+                      id: todo.id,
+                      title: todo.title,
+                      description: todo.description,
+                      done: !todo.done,
+                    };
+                    const tmpData = [...data];
+                    tmpData[index] = changedTodo;
+                    setData(tmpData);
+
+                    const response = await fetch("/api/todos", {
+                      method: "POST",
+                      body: JSON.stringify(changedTodo),
+                    });
+
+                    if (response.status !== 200) {
+                      const changedTodo = {
+                        id: todo.id,
+                        title: todo.title,
+                        description: todo.description,
+                        done: todo.done,
+                      };
+                      const tmpData = [...data];
+                      tmpData[index] = changedTodo;
+                      setData(tmpData);
+                    }
+                  }}
+                ></input>
+              </td>
             </tr>
           ))}
         </tbody>
