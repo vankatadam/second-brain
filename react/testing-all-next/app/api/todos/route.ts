@@ -7,7 +7,6 @@ import { NextRequest } from "next/server";
 import admin from "firebase-admin";
 import serviceAccount from "../../../service-account-key-firestore.json";
 // import { getFirestore } from "firebase-admin/firestore";
-import { collection, addDoc, getFirestore } from "firebase/firestore";
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
